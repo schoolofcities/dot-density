@@ -2,11 +2,12 @@
     import { onMount } from "svelte";
     import Papa from "papaparse";
     import { colorSchemes } from "./colorSchemes.js";
+    import { base } from "$app/paths";
 
     let data = [];
 
     onMount(() => {
-        Papa.parse("/summary-income.csv", {
+        Papa.parse(`${base}/summary-income.csv`, {
             download: true,
             header: true,
             complete: (results) => {
@@ -19,16 +20,15 @@
     });
 
     const labels = {
-        "under_30k": "≤ $30,000",
+        under_30k: "≤ $30,000",
         "30k_60k": "$30,000 to $60,000",
         "60k_90k": "$60,000 to $90,000",
         "90k_150k": "$90,000 to $150,000",
-        "over_150k": "≥ $150,000",
+        over_150k: "≥ $150,000",
     };
 
     function getColor(key) {
-        const c =
-            colorSchemes.income[key] || colorSchemes.income.default;
+        const c = colorSchemes.income[key] || colorSchemes.income.default;
         return `rgb(${c[0]},${c[1]},${c[2]})`;
     }
 </script>

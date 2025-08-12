@@ -2,11 +2,12 @@
     import { onMount } from "svelte";
     import Papa from "papaparse";
     import { colorSchemes } from "./colorSchemes.js";
+    import { base } from "$app/paths";
 
     let data = [];
 
     onMount(() => {
-        Papa.parse("/summary-commute_time.csv", {
+        Papa.parse(`${base}/summary-commute_time.csv`, {
             download: true,
             header: true,
             complete: (results) => {

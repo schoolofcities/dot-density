@@ -2,11 +2,12 @@
     import { onMount } from "svelte";
     import Papa from "papaparse";
     import { colorSchemes } from "./colorSchemes.js";
+    import { base } from "$app/paths";
 
     let data = [];
 
     onMount(() => {
-        Papa.parse("/summary-immigration.csv", {
+        Papa.parse(`${base}/summary-immigration.csv`, {
             download: true,
             header: true,
             complete: (results) => {
@@ -18,14 +19,14 @@
         });
     });
 
-const labels = {
-    non_immigrant: "Not an immigrant",
-    before_1980: "Before 1980",
-    "1980_1990": "1980 to 1990",
-    "1991_2000": "1991 to 2000",
-    "2001_2010": "2001 to 2010",
-    "2011_2021": "2011 to 2021",
-};
+    const labels = {
+        non_immigrant: "Not an immigrant",
+        before_1980: "Before 1980",
+        "1980_1990": "1980 to 1990",
+        "1991_2000": "1991 to 2000",
+        "2001_2010": "2001 to 2010",
+        "2011_2021": "2011 to 2021",
+    };
 
     function getColor(key) {
         const c =
