@@ -22,9 +22,9 @@
         ea: "East Asian",
         b: "Black",
         sea: "Southeast Asian",
-        la: "Latin American",
         wa: "Arab / West Asian",
         m: "Mixed / Other",
+        la: "Latin American",
         // o: "Other",
         // a: "Arab",
         i: "Indigenous",
@@ -37,7 +37,9 @@
     }
 </script>
 
-<div style="display: flex; width: 100%; height: 8px; padding-top: 15px; overflow: hidden">
+<div
+    style="display: flex; width: 100%; height: 8px; padding-top: 15px; overflow: hidden"
+>
     {#each data as d (d.key)}
         {#if d.value > 0}
             <div
@@ -53,12 +55,16 @@
     {/each}
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 8px;">
+<div
+    style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 8px;"
+>
     {#each data as d, i (d.key)}
         {#if d.value > 0}
             <span style="display: flex; align-items: center; font-size: 0.8em;">
                 <span
-                    style="display:inline-block;width:10px;height:10px;background:{getColor(d.key)};margin-right:5px;border-radius:10px;"
+                    style="display:inline-block;width:10px;height:10px;background:{getColor(
+                        d.key,
+                    )};margin-right:5px;border-radius:10px;"
                 ></span>
                 {labels[d.key]} ({d.value.toFixed(1)}%)
             </span>

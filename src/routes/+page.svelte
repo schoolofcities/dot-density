@@ -1,14 +1,10 @@
 <script>
     // TO DO
-    // use tiles for basemap, format labels and zooming on top of dots
-    // add N/A category for income, and commuting
-    // make 3d button experimental
-    // put light/dark button on map
-    // put 1 dot = 10 people in more obvious place
-    // group bottom 2 immigration categories
-    // coarse buckets for age (youth, working age, seniors...)
-    // income colors could be blue to green
+    // generate gridded points
     // clean up clipping mask
+    // use tiles for basemap, format labels and zooming on top of dots
+    // add N/A category for income, and commuting (subtract working pop from total pop)
+    // make 3d button experimental
 
     // Modules
     import { onMount } from "svelte";
@@ -29,6 +25,7 @@
     import BarPeople from "$lib/BarPeople.svelte";
     import BarEthnicity from "$lib/BarEthnicity.svelte";
     import BarGender from "$lib/BarGender.svelte";
+    import BarAge from "$lib/BarAge.svelte";
     import BarTransportation from "$lib/BarTransportation.svelte";
     import BarCommuteTime from "$lib/BarCommuteTime.svelte";
     import BarIncome from "$lib/BarIncome.svelte";
@@ -36,13 +33,14 @@
 
     // Logo
     import logoFull from "../assets/top-logo-full.svg";
+    import lightDark from "../assets/light-dark.svg";
 
     // Initialize variables
     let map;
-    let currentField = "people";
+    let currentField = "ethnicity";
     let deckOverlay;
     let pointData = [];
-    let showBasemap = true;
+    let invertBasemap = true;
     let showCanvas = true;
     let heightMultiplier = 0;
     let pointSize = 0.65;
@@ -201,6 +199,19 @@
     });
 </script>
 
+<button
+    class="invert-btn"
+    class:active={!invertBasemap}
+    on:click={() => (invertBasemap = !invertBasemap)}
+    style="display: flex; align-items: center; justify-content: center;"
+>
+<img
+    src={lightDark}
+    alt="Toggle basemap"
+    style="width: 22px; height: 22px; transform: rotate({invertBasemap ? 180 : 0}deg);"
+/>
+</button>
+
 <div id="dashboard">
     <div class="title-block">
         <div class="title-content">
@@ -230,7 +241,7 @@
 
     <div class="content">
         <div class="field-selector">
-            <h4>Thematic</h4>
+            <h4 style="display: none;">Thematic</h4>
             <div class="field-buttons">
                 <button
                     class:active={currentField === "people"}
@@ -290,28 +301,38 @@
                 </button>
             </div>
 
-            {#if currentField === "ethnicity"}
-                <BarEthnicity />
-            {/if}
-            {#if currentField === "gender"}
-                <BarGender />
-            {/if}
-            {#if currentField === "journey_type"}
-                <BarTransportation />
-            {/if}
-            {#if currentField === "commute_time"}
-                <BarCommuteTime />
-            {/if}
-            {#if currentField === "people"}
-                <BarPeople />
-            {/if}
-            {#if currentField === "income"}
-                <BarIncome />
-            {/if}
-            {#if currentField === "immigration"}
-                <BarImmigration />
-            {/if}
+            <div>
+                <p style="font-size: 0.8em; margin-bottom: 0;">
+                    1 dot = 10 people
+                </p>
+            </div>
 
+            <div class="legend-space">
+                {#if currentField === "ethnicity"}
+                    <BarEthnicity />
+                {/if}
+                {#if currentField === "gender"}
+                    <BarGender />
+                {/if}
+                {#if currentField === "age"}
+                    <BarAge />
+                {/if}
+                {#if currentField === "journey_type"}
+                    <BarTransportation />
+                {/if}
+                {#if currentField === "commute_time"}
+                    <BarCommuteTime />
+                {/if}
+                {#if currentField === "people"}
+                    <BarPeople />
+                {/if}
+                {#if currentField === "income"}
+                    <BarIncome />
+                {/if}
+                {#if currentField === "immigration"}
+                    <BarImmigration />
+                {/if}
+            </div>
             <h4 style="display: none;">3D</h4>
             <div class="field-buttons" style="flex-direction: column;">
                 <button
@@ -320,6 +341,7 @@
                         heightMultiplier = 1;
                         handlePitchToggle(true);
                     }}
+                    style="display: none;"
                 >
                     Population Density
                 </button>
@@ -329,19 +351,21 @@
                         heightMultiplier = 0;
                         handlePitchToggle(false);
                     }}
+                    style="display: none;"
                 >
                     Flat
                 </button>
             </div>
 
-            <h4>Basemap</h4>
+            <h4 style="display: none;">Basemap</h4>
             <div class="field-buttons">
                 <button
                     class="basemap-btn invert-btn"
-                    class:active={!showBasemap}
-                    on:click={() => (showBasemap = !showBasemap)}
+                    class:active={!invertBasemap}
+                    on:click={() => (invertBasemap = !invertBasemap)}
+                    style="display: none;"
                 >
-                    {showBasemap ? "Light" : "Dark"}
+                    {invertBasemap ? "Light" : "Dark"}
                 </button>
                 <button
                     class="basemap-btn toggle-btn"
@@ -372,8 +396,6 @@
                 nuance that is focused on the continuous mesh of people, instead
                 of administrative boundaries.
             </p>
-
-            <p>1 Dot = 10 People.</p>
 
             <h3>Methodology</h3>
             <p>
@@ -408,7 +430,7 @@
 
 <div
     id="map"
-    class:hide-basemap={!showBasemap}
+    class:invert-basemap={!invertBasemap}
     class:hide-canvas={!showCanvas}
     style="position: relative;"
 >

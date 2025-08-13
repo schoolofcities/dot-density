@@ -52,7 +52,7 @@
 </div>
 
 <div
-    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 8px;"
+    style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 8px;"
 >
     {#each data as d, i (d.key)}
         {#if d.value > 0}

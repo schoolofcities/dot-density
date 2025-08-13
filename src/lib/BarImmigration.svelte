@@ -21,8 +21,8 @@
 
     const labels = {
         non_immigrant: "Not an immigrant",
-        before_1980: "Before 1980",
-        "1980_1990": "1980 to 1990",
+        before_1990: "Before 1990",
+        // "1980_1990": "1980 to 1990",
         "1991_2000": "1991 to 2000",
         "2001_2010": "2001 to 2010",
         "2011_2021": "2011 to 2021",
@@ -54,7 +54,7 @@
 </div>
 
 <div
-    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 8px;"
+    style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 8px;"
 >
     {#each data as d, i (d.key)}
         {#if d.value > 0}

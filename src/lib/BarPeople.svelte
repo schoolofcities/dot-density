@@ -5,6 +5,6 @@
     <div
         style="margin-top: 8px; text-align: left; font-size: 0.8em; display: flex; align-items: center;"
     >
-        2,776,450 people
+        Population: 2,776,450
     </div>
 </div>
