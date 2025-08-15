@@ -20,10 +20,10 @@
     });
 
 const labels = {
-    "0_19": "Youth 0-19",
-    "20_39": "Early Career 20-39",
-    "40_64": "Late Career 40-64",
-    "65plus": "Senior 65+",
+    "0_19": "0-19",
+    "20_39": "20-39",
+    "40_64": "40-64",
+    "65plus": "65+",
 };
     
     function getColor(key) {

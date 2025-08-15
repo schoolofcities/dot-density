@@ -1,10 +1,9 @@
 <script>
     // TO DO
-    // generate gridded points
-    // clean up clipping mask
     // use tiles for basemap, format labels and zooming on top of dots
     // add N/A category for income, and commuting (subtract working pop from total pop)
     // make 3d button experimental
+    // make buttons on fullscreen map too
 
     // Modules
     import { onMount } from "svelte";
@@ -48,7 +47,7 @@
     let basemapInverted = false;
     let loading = true;
 
-    const CSV_URL = `${base}/pp-to.csv`;
+    const CSV_URL = `${base}/pp-to-10m.csv`;
     const gl = WebGLRenderingContext;
 
     // Function to create the point cloud layer
@@ -205,11 +204,13 @@
     on:click={() => (invertBasemap = !invertBasemap)}
     style="display: flex; align-items: center; justify-content: center;"
 >
-<img
-    src={lightDark}
-    alt="Toggle basemap"
-    style="width: 22px; height: 22px; transform: rotate({invertBasemap ? 180 : 0}deg);"
-/>
+    <img
+        src={lightDark}
+        alt="Toggle basemap"
+        style="width: 22px; height: 22px; transform: rotate({invertBasemap
+            ? 180
+            : 0}deg);"
+    />
 </button>
 
 <div id="dashboard">
@@ -399,8 +400,22 @@
 
             <h3>Methodology</h3>
             <p>
-                The dots were created using dissemintated data from the 2021
-                Canadian Census.
+                The dots were created using population data by Toronto
+                dissemination areas as collected from the 2021 Canadian Census.
+                Focusing on Toronto, we explored the different thematics by
+                classifying each dot by a categorical variable, distributed by
+                the relative percentages within their dissemination area.
+            </p>
+            <p>
+                The result shows variations and diversity in a coloured dotted
+                pattern that spans the entire City of Toronto.
+            </p>
+
+            <p>
+                This work takes inspiration from Jonathan Critchley's <a
+                    href="https://jonathancritchley.ca/todot.html"
+                    target="_blank">Toronto 2006 Dot Density</a
+                > maps.
             </p>
             <p class="credit">
                 Created by <a
