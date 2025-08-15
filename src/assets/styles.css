@@ -77,6 +77,19 @@ h4 {
     z-index: 1000;
 }
 
+.threed-btn {
+    position: absolute;
+    top: 185px;
+    right: 8px;
+    width: 33px;
+    height: 33px;
+    background: rgba(255, 255, 255, 1);
+    border: 2px solid rgba(204, 204, 204, 0.7);
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
 #map.hide-canvas .maplibregl-canvas {
     opacity: 0;
 }
@@ -157,7 +170,7 @@ h4 {
 }
 
 .legend-space {
-    height: 170px;
+    height: 180px;
 }
 
 .logo-mobile {
@@ -235,8 +248,8 @@ h4 {
 @media (max-width: 760px) {
     :root {
         --map-width: 100%;
-        --map-height: 70vh;
-        --map-top: 30vh;
+        --map-height: 60vh;
+        --map-top: 40vh;
     }
 
     #map {
@@ -273,13 +286,7 @@ h4 {
     }
 
     .legend-space {
-        height: 100px;
-    }
-
-    .invert-btn {
-        top: auto;
-        bottom: 383px;
-
+        height: 180px;
     }
 
     .logo-mobile {
@@ -295,7 +302,7 @@ h4 {
     #dashboard {
         display: flex;
         width: 100%;
-        height: 30vh;
+        height: 40vh;
         overflow-y: auto;
         border-bottom: 1px solid #000;
         border-right: none;

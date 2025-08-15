@@ -1,12 +1,13 @@
 <script>
     // TO DO
     // use tiles for basemap, format labels and zooming on top of dots
-    // add N/A category for income, and commuting (subtract working pop from total pop)
-    // make 3d button experimental
-    // make buttons on fullscreen map too
+    // add N/A category for income, and commuting (subtract working pop from total pop)... data is confusing
+    // optimize mobile
 
     // Modules
     import { onMount } from "svelte";
+    import { tweened } from "svelte/motion";
+    import { cubicOut } from "svelte/easing";
     import { base } from "$app/paths";
     import maplibregl from "maplibre-gl";
     import Papa from "papaparse";
@@ -41,24 +42,25 @@
     let pointData = [];
     let invertBasemap = true;
     let showCanvas = true;
-    let heightMultiplier = 0;
-    let pointSize = 0.65;
+    const heightMultiplierTween = tweened(0, { duration: 600, easing: cubicOut });
+    $: heightMultiplier = $heightMultiplierTween;
+    let pointSize = 0.5;
     let zoomFactor = 1;
     let basemapInverted = false;
     let loading = true;
 
-    const CSV_URL = `${base}/pp-to-10m.csv`;
+    const CSV_URL = `${base}/pp-to-10m-height.csv`;
     const gl = WebGLRenderingContext;
 
     // Function to create the point cloud layer
     function createPointCloudLayer() {
         return new PointCloudLayer({
-            id: `point-cloud-layer-${currentField}`,
+            id: `point-cloud-layer-${currentField}-${heightMultiplier}`,
             data: pointData,
             getPosition: (d) => [
                 d.coordinates[0],
                 d.coordinates[1],
-                ((d.height || 0) ** 2 * 4000 - 100) * heightMultiplier,
+                (d.height - 0.1) * 2000 * heightMultiplier,
             ],
             getColor: (d) => {
                 const scheme = colorSchemes[currentField];
@@ -70,11 +72,19 @@
             material: {
                 ambient: 0.8,
             },
+            updateTriggers: {
+                getPosition: [heightMultiplier],
+                getColor: [currentField],
+            },
         });
     }
 
     // Reactive statements
     $: if (currentField && deckOverlay) {
+        updateLayer();
+    }
+
+    $: if (deckOverlay && pointData.length > 0) {
         updateLayer();
     }
     $: if (heightMultiplier !== undefined && deckOverlay) {
@@ -100,7 +110,7 @@
     // Zoom factor
     function calculateZoomFactor(zoom) {
         const baseZoom = 10.887;
-        const zoomSensitivity = 0.3;
+        const zoomSensitivity = 0.38;
         return Math.pow(2, (zoom - baseZoom) * zoomSensitivity);
     }
 
@@ -131,6 +141,19 @@
             // Initialize the point cloud layer
             const pointCloudLayer = createPointCloudLayer();
 
+            // Place custom buttons inside map div
+            const btn = document.querySelector(".invert-btn");
+            const threedBtn = document.querySelector(".threed-btn");
+            const container = document.querySelector(
+                ".maplibregl-canvas-container",
+            );
+            if (btn && container) {
+                container.appendChild(btn);
+            }
+            if (threedBtn && container) {
+                container.appendChild(threedBtn);
+            }
+
             // Map controls
             map.addControl(new maplibregl.NavigationControl(), "top-right");
             map.addControl(
@@ -141,6 +164,7 @@
                 "bottom-left",
             );
             map.addControl(new maplibregl.FullscreenControl(), "top-right");
+            map.doubleClickZoom.disable();
 
             // Load CSV data
             const response = await fetch(CSV_URL);
@@ -165,6 +189,12 @@
                 commute_time: row.commute_time || "unknown",
                 immigration: row.immigration || "unknown",
             }));
+            console.log(
+                "First 20 point positions:",
+                pointData
+                    .slice(0, 20)
+                    .map((p) => p.coordinates.concat(p.height)),
+            );
 
             // Add point cloud layer
             deckOverlay = new MapboxOverlay({
@@ -184,14 +214,14 @@
             });
 
             // Log map position changes
-            map.on("moveend", () => {
-                console.log("Map position changed:", {
-                    center: map.getCenter(),
-                    zoom: map.getZoom(),
-                    pitch: map.getPitch(),
-                    bearing: map.getBearing(),
-                });
-            });
+            // map.on("moveend", () => {
+            //     console.log("Map position changed:", {
+            //         center: map.getCenter(),
+            //         zoom: map.getZoom(),
+            //         pitch: map.getPitch(),
+            //         bearing: map.getBearing(),
+            //     });
+            // });
 
             loading = false;
         });
@@ -211,6 +241,19 @@
             ? 180
             : 0}deg);"
     />
+</button>
+
+<button
+    class="threed-btn"
+    class:active={heightMultiplier === 1}
+    on:click={() => {
+        heightMultiplierTween.set(heightMultiplier === 1 ? 0 : 1);
+        handlePitchToggle(heightMultiplier === 0);
+        console.log("heightMultiplier changed to:", heightMultiplier === 1 ? 0 : 1);
+    }}
+    style="display: flex; align-items: center; justify-content: center; {heightMultiplier === 1 ? 'background: #f3f3f3; border: 1px solid #ccc; box-shadow: inset 0 1px 3px #bbb;' : ''}"
+>
+    <strong>3D</strong>
 </button>
 
 <div id="dashboard">
@@ -334,29 +377,6 @@
                     <BarImmigration />
                 {/if}
             </div>
-            <h4 style="display: none;">3D</h4>
-            <div class="field-buttons" style="flex-direction: column;">
-                <button
-                    class:active={heightMultiplier === 1}
-                    on:click={() => {
-                        heightMultiplier = 1;
-                        handlePitchToggle(true);
-                    }}
-                    style="display: none;"
-                >
-                    Population Density
-                </button>
-                <button
-                    class:active={heightMultiplier === 0}
-                    on:click={() => {
-                        heightMultiplier = 0;
-                        handlePitchToggle(false);
-                    }}
-                    style="display: none;"
-                >
-                    Flat
-                </button>
-            </div>
 
             <h4 style="display: none;">Basemap</h4>
             <div class="field-buttons">
@@ -378,10 +398,10 @@
                 </button>
             </div>
         </div>
-
+<!-- 
         <div class="point-size-control">
             <PointSizeSlider bind:pointSize />
-        </div>
+        </div> -->
 
         <div class="info-block">
             <h3>Info</h3>
@@ -402,15 +422,35 @@
             <p>
                 The dots were created using population data by Toronto
                 dissemination areas as collected from the 2021 Canadian Census.
-                Focusing on Toronto, we explored the different thematics by
+            </p>
+
+            <p>
+                Focusing on Toronto, we explored different thematics by
                 classifying each dot by a categorical variable, distributed by
                 the relative percentages within their dissemination area.
             </p>
+
             <p>
-                The result shows variations and diversity in a coloured dotted
-                pattern that spans the entire City of Toronto.
+                The result shows variations and diversity in colourful dotted
+                patterns that span the entire city.
             </p>
 
+            <h3>3D view</h3>
+
+            <p>
+                The 3D toggle is an experimental feature that visualizes
+                population density as a point cloud, with peaks representing
+                higher density areas and valleys representing lower density
+                areas.
+            </p>
+
+            <p>
+                The heights of the dots were calculated using nearest neighbor
+                calculations that take into account the density of surrounding
+                points.
+            </p>
+
+            <h3>References</h3>
             <p>
                 This work takes inspiration from Jonathan Critchley's <a
                     href="https://jonathancritchley.ca/todot.html"

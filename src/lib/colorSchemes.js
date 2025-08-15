@@ -7,6 +7,8 @@ export const colorSchemes = {
         m: [111, 199, 234], // male
         f: [220, 70, 51], // female
         o: [208, 209, 217, 0], // undefined
+        unknown: [208, 209, 217, 0],
+
     },
     ethnicity: {
         a: [111, 199, 234], // arab
@@ -20,7 +22,7 @@ export const colorSchemes = {
         b: [0, 127, 163], // black
         w: [191, 191, 191], // white
         o: [255, 255, 255, 0], // other
-        default: [220, 220, 220, 0], // undefined
+        unknown: [208, 209, 217, 0],
     },
     income: {
         "under_30k": [110, 77, 142],
@@ -37,7 +39,7 @@ export const colorSchemes = {
         "1991_2000": [64, 144, 177],
         "2001_2010": [0, 161, 137],
         "2011_2021": [241, 197, 0],
-        default: [220, 220, 220],
+        unknown: [208, 209, 217, 0],
     },
     journey_type: {
         c: [171, 19, 104], // car
@@ -45,8 +47,8 @@ export const colorSchemes = {
         w: [141, 191, 46], // walk
         b: [241, 197, 0], // bike
         o: [208, 209, 201], // other
-        unknown: [208, 209, 217],
-        default: [208, 209, 217],
+        unknown: [208, 209, 217, 0],
+
     },
     commute_time: {
         "0_15": [111, 199, 234], // 0-14 minutes
@@ -61,5 +63,6 @@ export const colorSchemes = {
         "20_39": [171, 19, 104],
         "40_64": [141, 191, 46],
         "65plus": [111, 199, 234],
+        unknown: [208, 209, 217, 0],
     }
 };
