@@ -26,10 +26,13 @@
 
 html,
 body {
-    height: 100dvh;
     height: 100vh;
+    height: 100dvh;
+
     width: 100vw;
+    width: 100dvw;
     max-width: 100vw;
+    max-width: 100dvw;
     overflow-x: hidden;
     box-sizing: border-box;
     margin: 0;
@@ -48,9 +51,8 @@ h4 {
 #map {
     position: relative;
     width: var(--map-width);
-    height: 100dvh;
     height: 100vh;
-    /* background: #fffef7; */
+    height: 100dvh;
     background: rgb(255, 255, 255);
     overflow-y: none;
     margin-left: auto;
@@ -111,8 +113,9 @@ h4 {
     top: 0;
     right: 0;
     width: var(--map-width);
-    height: 100dvh;
+
     height: 100vh;
+    height: 100dvh;
     z-index: 2000;
     display: flex;
     align-items: center;
@@ -122,8 +125,9 @@ h4 {
 #dashboard {
     position: absolute;
     width: 380px;
-    height: 100dvh;
     height: 100vh;
+    height: 100dvh;
+
     background: rgba(245, 245, 245, 1);
     /* background: white; */
     border-right: 1px solid #000;
@@ -272,10 +276,10 @@ h4 {
 @media (max-width: 760px) {
     :root {
         --map-width: 100%;
-        --map-height: 60dvh;
         --map-height: 60vh;
-        --map-top: 40dvh;
+        --map-height: 60dvh;
         --map-top: 40vh;
+        --map-top: 40dvh;
     }
 
     #map {
@@ -333,8 +337,8 @@ h4 {
         width: 100%;
         width: 100dvw;
         max-width: 100dvw;
-        height: 40dvh;
         height: 40vh;
+        height: 40dvh;
         overflow-y: auto;
         border-bottom: 1px solid #000;
         border-right: none;
