@@ -303,7 +303,7 @@
 <div id="dashboard">
     <div class="title-block">
         <div class="title-content">
-            <svg width="50" height="50" viewBox="0 0 40 40">
+            <svg width="45" height="45" viewBox="0 0 40 40">
                 <circle
                     cx="20"
                     cy="20"
