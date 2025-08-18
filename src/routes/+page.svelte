@@ -42,7 +42,10 @@
     let pointData = [];
     let invertBasemap = true;
     let showCanvas = true;
-    const heightMultiplierTween = tweened(0, { duration: 600, easing: cubicOut });
+    const heightMultiplierTween = tweened(0, {
+        duration: 600,
+        easing: cubicOut,
+    });
     $: heightMultiplier = $heightMultiplierTween;
     let pointSize = 0.5;
     let zoomFactor = 1;
@@ -60,9 +63,14 @@
             getPosition: (d) => [
                 d.coordinates[0],
                 d.coordinates[1],
-                (d.height - 0.1) * 2000 * heightMultiplier,
+                d.height * 2000 * heightMultiplier,
             ],
             getColor: (d) => {
+                if (currentField === "people") {
+                    return invertBasemap
+                        ? [...colorSchemes.people.light]
+                        : [...colorSchemes.people.dark];
+                }
                 const scheme = colorSchemes[currentField];
                 const value = d[currentField];
                 return scheme[value] || scheme.default;
@@ -74,7 +82,7 @@
             },
             updateTriggers: {
                 getPosition: [heightMultiplier],
-                getColor: [currentField],
+                getColor: [currentField, invertBasemap],
             },
         });
     }
@@ -83,7 +91,6 @@
     $: if (currentField && deckOverlay) {
         updateLayer();
     }
-
     $: if (deckOverlay && pointData.length > 0) {
         updateLayer();
     }
@@ -94,6 +101,9 @@
         updateLayer();
     }
     $: if (zoomFactor !== undefined && deckOverlay) {
+        updateLayer();
+    }
+    $: if (invertBasemap !== undefined && deckOverlay) {
         updateLayer();
     }
 
@@ -114,6 +124,31 @@
         return Math.pow(2, (zoom - baseZoom) * zoomSensitivity);
     }
 
+    // Interpolate zoom level based on #map width
+    function getInterpolatedZoom(width) {
+        const minWidth = 300;
+        const midWidth = 416;
+        const maxWidth = 1090;
+        const minZoom = 8.7;
+        const midZoom = 9.081832055479255;
+        const maxZoom = 10.496;
+        const clampedWidth = Math.max(minWidth, Math.min(maxWidth, width));
+
+        if (clampedWidth <= midWidth) {
+            return (
+                minZoom +
+                ((clampedWidth - minWidth) / (midWidth - minWidth)) *
+                    (midZoom - minZoom)
+            );
+        } else {
+            return (
+                midZoom +
+                ((clampedWidth - midWidth) / (maxWidth - midWidth)) *
+                    (maxZoom - midZoom)
+            );
+        }
+    }
+
     // Function to handle pitch toggle
     function handlePitchToggle(isExtended) {
         if (map) {
@@ -127,17 +162,27 @@
 
     // Initialize the map and load data
     onMount(async () => {
+        let initialZoom = 10.496;
+        const mapDiv = document.getElementById("map");
+        if (mapDiv) {
+            initialZoom = getInterpolatedZoom(mapDiv.offsetWidth);
+        }
         map = new maplibregl.Map({
             container: "map",
             style: "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
             center: [-79.3559225, 43.7138077],
-            zoom: 10.496,
+            zoom: initialZoom,
             pitch: 0,
             maxPitch: 80,
             bearing: -17,
         });
 
         map.on("load", async () => {
+            const mapDiv = document.getElementById("map");
+            if (mapDiv) {
+                console.log("Map div width:", mapDiv.offsetWidth, "px");
+            }
+
             // Initialize the point cloud layer
             const pointCloudLayer = createPointCloudLayer();
 
@@ -189,12 +234,6 @@
                 commute_time: row.commute_time || "unknown",
                 immigration: row.immigration || "unknown",
             }));
-            console.log(
-                "First 20 point positions:",
-                pointData
-                    .slice(0, 20)
-                    .map((p) => p.coordinates.concat(p.height)),
-            );
 
             // Add point cloud layer
             deckOverlay = new MapboxOverlay({
@@ -205,7 +244,6 @@
             // Initialize zoom factor
             zoomFactor = calculateZoomFactor(map.getZoom());
 
-            // Listen for zoom changes to update point size
             map.on("zoom", () => {
                 const newZoomFactor = calculateZoomFactor(map.getZoom());
                 if (Math.abs(newZoomFactor - zoomFactor) > 0.01) {
@@ -249,9 +287,15 @@
     on:click={() => {
         heightMultiplierTween.set(heightMultiplier === 1 ? 0 : 1);
         handlePitchToggle(heightMultiplier === 0);
-        console.log("heightMultiplier changed to:", heightMultiplier === 1 ? 0 : 1);
+        console.log(
+            "heightMultiplier changed to:",
+            heightMultiplier === 1 ? 0 : 1,
+        );
     }}
-    style="display: flex; align-items: center; justify-content: center; {heightMultiplier === 1 ? 'background: #f3f3f3; border: 1px solid #ccc; box-shadow: inset 0 1px 3px #bbb;' : ''}"
+    style="display: flex; align-items: center; justify-content: center; {heightMultiplier ===
+    1
+        ? 'background: #f3f3f3; border: 1px solid #ccc; box-shadow: inset 0 1px 3px #bbb;'
+        : ''}"
 >
     <strong>3D</strong>
 </button>
@@ -398,7 +442,7 @@
                 </button>
             </div>
         </div>
-<!-- 
+        <!-- 
         <div class="point-size-control">
             <PointSizeSlider bind:pointSize />
         </div> -->

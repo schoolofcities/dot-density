@@ -1,7 +1,7 @@
 export const colorSchemes = {
     people: {
-        light: [200, 200, 200],
-        dark: [100, 100, 40],
+        light: [0, 0, 0],
+        dark: [255, 255, 255],
     },
     gender: {
         m: [111, 199, 234], // male
