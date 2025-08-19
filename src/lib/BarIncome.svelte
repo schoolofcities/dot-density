@@ -20,6 +20,7 @@
     });
 
     const labels = {
+        no_income: "Non-working",
         under_30k: "≤ $30,000",
         "30k_60k": "$30,000 to $60,000",
         "60k_90k": "$60,000 to $90,000",

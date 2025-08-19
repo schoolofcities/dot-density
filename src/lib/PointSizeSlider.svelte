@@ -1,9 +1,8 @@
 <script>
-    // Exported value for point size
-    export let pointSize = 1;
+    export let pointSize = 0.65;
 
-    const minSize = 0.5;
-    const maxSize = 0.8;
+    const minSize = 0.3;
+    const maxSize = 1;
 
     function handleInput(event) {
         pointSize = parseFloat(event.target.value);
@@ -34,12 +33,6 @@
         margin: 1rem 0;
     }
 
-    .slider-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: bold;
-    }
-
     .slider-container {
         display: flex;
         align-items: center;
@@ -65,13 +58,13 @@
     /* WebKit (Chrome, Safari) thumb */
     .slider::-webkit-slider-thumb {
         -webkit-appearance: none;
-        height: 15px;
-        width: 15px;
+        height: 12px;
+        width: 12px;
         border-radius: 50%;
         background: white;
         border: 1px solid black;
         cursor: pointer;
-        margin-top: -14px;
+        margin-top: -12px;
     }
 
     /* Firefox thumb */

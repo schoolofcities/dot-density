@@ -1,8 +1,6 @@
 <script>
     // TO DO
     // use tiles for basemap, format labels and zooming on top of dots
-    // add N/A category for income, and commuting (subtract working pop from total pop)... data is confusing
-    // optimize mobile
 
     // Modules
     import { onMount } from "svelte";
@@ -47,12 +45,12 @@
         easing: cubicOut,
     });
     $: heightMultiplier = $heightMultiplierTween;
-    let pointSize = 0.5;
+    let pointSize = 0.6;
     let zoomFactor = 1;
     let basemapInverted = false;
     let loading = true;
 
-    const CSV_URL = `${base}/pp-to-10m-height.csv`;
+    const CSV_URL = `${base}/pp-to-10m-income-edit-2.csv`;
     const gl = WebGLRenderingContext;
 
     // Function to create the point cloud layer
@@ -167,6 +165,7 @@
         if (mapDiv) {
             initialZoom = getInterpolatedZoom(mapDiv.offsetWidth);
         }
+
         map = new maplibregl.Map({
             container: "map",
             style: "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
@@ -176,6 +175,16 @@
             maxPitch: 80,
             bearing: -17,
         });
+
+        const width = mapDiv ? mapDiv.offsetWidth : window.innerWidth;
+
+        if (width < 400) {
+            pointSize = 0.35;
+        } else if (width < 800) {
+            pointSize = 0.45;
+        } else {
+            pointSize = 0.6;
+        }
 
         map.on("load", async () => {
             const mapDiv = document.getElementById("map");
@@ -252,14 +261,14 @@
             });
 
             // Log map position changes
-            // map.on("moveend", () => {
-            //     console.log("Map position changed:", {
-            //         center: map.getCenter(),
-            //         zoom: map.getZoom(),
-            //         pitch: map.getPitch(),
-            //         bearing: map.getBearing(),
-            //     });
-            // });
+            map.on("moveend", () => {
+                console.log("Map position changed:", {
+                    center: map.getCenter(),
+                    zoom: map.getZoom(),
+                    pitch: map.getPitch(),
+                    bearing: map.getBearing(),
+                });
+            });
 
             loading = false;
         });
@@ -442,24 +451,19 @@
                 </button>
             </div>
         </div>
-        <!-- 
+
         <div class="point-size-control">
             <PointSizeSlider bind:pointSize />
-        </div> -->
+        </div>
 
         <div class="info-block">
             <h3>Info</h3>
             <p>
-                This map shows the population of Toronto, Ontario, Canada as
+                This map shows a dot density map of the population of Toronto, Ontario, Canada as
                 collected by Statistics Canada for the <a
                     href="https://www12.statcan.gc.ca/census-recensement/index-eng.cfm"
                     target="_blank">2021 Canadian Census</a
                 >.
-            </p>
-            <p>
-                Using dots to visualize people, this map displays geographic
-                nuance that is focused on the continuous mesh of people, instead
-                of administrative boundaries.
             </p>
 
             <h3>Methodology</h3>

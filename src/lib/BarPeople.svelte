@@ -5,6 +5,7 @@
     <div
         style="margin-top: 8px; text-align: left; font-size: 0.8em; display: flex; align-items: center;"
     >
-        Population: 2,776,450
+        Population: 2,794,356
+
     </div>
 </div>

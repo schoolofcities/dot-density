@@ -25,6 +25,7 @@ export const colorSchemes = {
         unknown: [208, 209, 217, 0],
     },
     income: {
+        "no_income": [191, 191, 191],
         "under_30k": [110, 77, 142],
         "30k_60k": [64, 144, 177],
         "60k_90k": [44, 99, 97],
@@ -47,6 +48,7 @@ export const colorSchemes = {
         w: [141, 191, 46], // walk
         b: [241, 197, 0], // bike
         o: [208, 209, 201], // other
+        n: [191,191,191],
         unknown: [208, 209, 217, 0],
 
     },
@@ -56,6 +58,7 @@ export const colorSchemes = {
         "30_44": [147, 118, 168], // 30-44 minutes
         "45_59": [194, 65, 118], // 45-59 minutes
         "60plus": [220, 70, 51], // 60-89 minutes
+        no_income: [191, 191, 191],
         unknown: [208, 209, 217, 0],
     },
     age: {

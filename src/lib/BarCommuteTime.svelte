@@ -20,6 +20,7 @@
     });
 
     const labels = {
+        no_income: "Non-working",
         "0_15": "≤ 15 minutes",
         "15_29": "15 to 29 minutes",
         "30_44": "30 to 44 minutes",

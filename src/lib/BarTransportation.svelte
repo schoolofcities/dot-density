@@ -1,13 +1,23 @@
 <script>
+    import { onMount } from "svelte";
+    import Papa from "papaparse";
     import { colorSchemes } from "./colorSchemes.js";
+    import { base } from "$app/paths";
 
-    const data = [
-        { key: "c", value: 61.930385673740474 },
-        { key: "t", value: 25.947976545504314 },
-        { key: "w", value: 7.918413507945426 },
-        { key: "o", value: 2.430090331503652 },
-        { key: "b", value: 1.7043408105343532 },
-    ];
+    let data = [];
+
+    onMount(() => {
+        Papa.parse(`${base}/summary-journey_type.csv`, {
+            download: true,
+            header: true,
+            complete: (results) => {
+                data = results.data.map((row) => ({
+                    key: row.journey_type,
+                    value: parseFloat(row.percentage),
+                }));
+            },
+        });
+    });
 
     const labels = {
         c: "Car",
@@ -15,6 +25,7 @@
         w: "Walk",
         o: "Other",
         b: "Bicycle",
+        n: "Non-working"
     };
 
     function getColor(key) {
@@ -23,7 +34,9 @@
     }
 </script>
 
-<div style="display: flex; width: 100%; height: 8px; padding-top: 15px; overflow: hidden">
+<div
+    style="display: flex; width: 100%; height: 8px; padding-top: 15px; overflow: hidden"
+>
     {#each data as d (d.key)}
         {#if d.value > 0}
             <div
@@ -39,12 +52,16 @@
     {/each}
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 8px;">
+<div
+    style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 8px;"
+>
     {#each data as d, i (d.key)}
         {#if d.value > 0}
             <span style="display: flex; align-items: center; font-size: 0.8em;">
                 <span
-                    style="display:inline-block;width:10px;height:10px;background:{getColor(d.key)};margin-right:5px;border-radius:10px;"
+                    style="display:inline-block;width:10px;height:10px;background:{getColor(
+                        d.key,
+                    )};margin-right:5px;border-radius:10px;"
                 ></span>
                 {labels[d.key]} ({d.value.toFixed(1)}%)
             </span>
